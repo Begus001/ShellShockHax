@@ -29,16 +29,23 @@ public class WinAPI
 		User32.INSTANCE.SetForegroundWindow(hwnd);
 	}
 
+	public static short getKey(int key)
+	{
+		return User32.INSTANCE.GetKeyState(key);
+	}
+
 	public interface User32 extends StdCallLibrary
 	{
 		User32 INSTANCE = Native.load("user32", User32.class, W32APIOptions.DEFAULT_OPTIONS);
 
 		WinDef.HWND FindWindow(String lpClassName, String lpWindowName);
 
-		boolean GetWindowRect(WinDef.HWND hwnd, WinDef.RECT lpRect);
+		WinDef.BOOL GetWindowRect(WinDef.HWND hwnd, WinDef.RECT lpRect);
 
 		WinDef.UINT GetDpiForWindow(WinDef.HWND hwnd);
 
-		boolean SetForegroundWindow(WinDef.HWND hwnd);
+		WinDef.BOOL SetForegroundWindow(WinDef.HWND hwnd);
+
+		short GetKeyState(int nVirtKey);
 	}
 }

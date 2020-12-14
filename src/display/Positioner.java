@@ -10,14 +10,12 @@ import java.util.List;
 
 public class Positioner
 {
+	private final List<WindowListener> listeners = new ArrayList<>();
 	private WinDef.HWND hwnd;
 	private WinDef.RECT rect;
 	private boolean shadow = true;
 	private double dpi;
 	private double lastX, lastY, lastWidth, lastHeight;
-
-	private final List<WindowListener> listeners = new ArrayList<>();
-
 	public Positioner(String lockTo)
 	{
 		hwnd = WinAPI.findWindow(lockTo);
@@ -40,7 +38,10 @@ public class Positioner
 		new Thread(() ->
 		{
 			while(true)
+			{
 				updatePosition();
+				WinAPI.getKey(0xA2);
+			}
 		}).start();
 	}
 
@@ -69,16 +70,25 @@ public class Positioner
 		rect = WinAPI.getWindowPosition(hwnd);
 		dpi = WinAPI.getDPI(hwnd) / 96.0d;
 
-		if(getX() != lastX || getY() != lastY || getWidth() != lastWidth || getHeight() != lastHeight)
+		if(getX() != lastX || getY() != lastY)
 		{
 			lastX = getX();
 			lastY = getY();
+
+			for(WindowListener l : listeners)
+			{
+				l.windowMoved(new WindowEvent(this, getX(), getY(), getWidth(), getHeight()));
+			}
+		}
+
+		if((int) getWidth() != (int) lastWidth || (int) getHeight() != (int) lastHeight)
+		{
 			lastWidth = getWidth();
 			lastHeight = getHeight();
 
 			for(WindowListener l : listeners)
 			{
-				l.windowChanged(new WindowEvent(this, getX(), getY(), getWidth(), getHeight()));
+				l.windowResized(new WindowEvent(this, getX(), getY(), getWidth(), getHeight()));
 			}
 		}
 	}
@@ -91,6 +101,11 @@ public class Positioner
 	public double getY1()
 	{
 		return shadow ? rect.bottom - 10.0f / dpi : rect.bottom;
+	}
+
+	public WinDef.HWND getHwnd()
+	{
+		return hwnd;
 	}
 
 	public void addWindowListener(WindowListener listener)

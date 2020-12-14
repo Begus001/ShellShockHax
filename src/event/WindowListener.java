@@ -4,5 +4,6 @@ import java.util.EventListener;
 
 public interface WindowListener extends EventListener
 {
-	void windowChanged(WindowEvent e);
+	void windowMoved(WindowEvent e);
+	void windowResized(WindowEvent e);
 }
