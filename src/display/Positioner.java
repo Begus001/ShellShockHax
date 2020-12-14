@@ -1,7 +1,12 @@
 package display;
 
+import api.WinAPI;
 import com.sun.jna.platform.win32.WinDef;
-import main.WinAPI;
+import event.WindowEvent;
+import event.WindowListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Positioner
 {
@@ -9,8 +14,9 @@ public class Positioner
 	private WinDef.RECT rect;
 	private boolean shadow = true;
 	private double dpi;
+	private double lastX, lastY, lastWidth, lastHeight;
 
-	// TODO: Fullscreen support
+	private final List<WindowListener> listeners = new ArrayList<>();
 
 	public Positioner(String lockTo)
 	{
@@ -22,43 +28,78 @@ public class Positioner
 			System.exit(0x01);
 		}
 
-		updatePosition();
-	}
-
-	public void updatePosition()
-	{
 		rect = WinAPI.getWindowPosition(hwnd);
-		dpi = WinAPI.getDPI(hwnd) / 96.0d;
-		System.out.printf("%f/%f   %f/%f\n", getLeft(), getTop(), getWidth(), getHeight());
+
+		lastX = getX();
+		lastY = getY();
+		lastWidth = getWidth();
+		lastHeight = getHeight();
+
+		WinAPI.focusWindow(hwnd);
+
+		new Thread(() ->
+		{
+			while(true)
+				updatePosition();
+		}).start();
 	}
 
-	public double getLeft()
+	public double getX()
 	{
 		return shadow ? rect.left + 10.0f / dpi : rect.left;
 	}
 
-	public double getTop()
+	public double getY()
 	{
 		return shadow ? rect.top + 45.0f / dpi : rect.top;
 	}
 
 	public double getWidth()
 	{
-		return getRight() - getLeft();
+		return getX1() - getX();
 	}
 
 	public double getHeight()
 	{
-		return getBottom() - getTop();
+		return getY1() - getY();
 	}
 
-	public double getRight()
+	public void updatePosition()
+	{
+		rect = WinAPI.getWindowPosition(hwnd);
+		dpi = WinAPI.getDPI(hwnd) / 96.0d;
+
+		if(getX() != lastX || getY() != lastY || getWidth() != lastWidth || getHeight() != lastHeight)
+		{
+			lastX = getX();
+			lastY = getY();
+			lastWidth = getWidth();
+			lastHeight = getHeight();
+
+			for(WindowListener l : listeners)
+			{
+				l.windowChanged(new WindowEvent(this, getX(), getY(), getWidth(), getHeight()));
+			}
+		}
+	}
+
+	public double getX1()
 	{
 		return shadow ? rect.right - 10.0f / dpi : rect.right;
 	}
 
-	public double getBottom()
+	public double getY1()
 	{
 		return shadow ? rect.bottom - 10.0f / dpi : rect.bottom;
+	}
+
+	public void addWindowListener(WindowListener listener)
+	{
+		listeners.add(listener);
+	}
+
+	public void removeWindowListener(WindowListener listener)
+	{
+		listeners.remove(listener);
 	}
 }

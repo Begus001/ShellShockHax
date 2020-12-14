@@ -1,6 +1,8 @@
 package main;
 
 import display.Positioner;
+import event.WindowEvent;
+import event.WindowListener;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -11,8 +13,10 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-public class Main extends Application
+public class Main extends Application implements WindowListener
 {
+	private Stage main;
+
 	public static void main(String[] args)
 	{
 		Application.launch(args);
@@ -21,6 +25,8 @@ public class Main extends Application
 	@Override
 	public void start(Stage stage)
 	{
+		main = stage;
+
 		Positioner pos = new Positioner("ShellShock Live");
 
 		Group root = new Group();
@@ -43,19 +49,25 @@ public class Main extends Application
 
 		gc.fillRect(50, 50, pos.getWidth() - 100, pos.getHeight() - 100);
 
-		// TODO: Window changed event
-		new Thread(() ->
-		{
-			while(true)
-			{
-				pos.updatePosition();
-				stage.setWidth(pos.getWidth());
-				stage.setHeight(pos.getHeight());
-				stage.setX(pos.getLeft());
-				stage.setY(pos.getTop());
-			}
-		}).start();
-
 		stage.show();
+
+		pos.addWindowListener(this);
+
+		stage.setX(pos.getX());
+		stage.setY(pos.getY());
+		stage.setWidth(pos.getWidth());
+		stage.setHeight(pos.getHeight());
+	}
+
+	@Override
+	public void windowChanged(WindowEvent e)
+	{
+		main.setX(e.x);
+		main.setY(e.y);
+		main.setWidth(e.width);
+		main.setHeight(e.height);
+
+		if(Double.isInfinite(e.x) || Double.isInfinite(e.y) || Double.isInfinite(e.width) || Double.isInfinite(e.height))
+			System.exit(0);
 	}
 }
