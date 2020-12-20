@@ -1,7 +1,6 @@
 package main;
 
-import display.Parabulator;
-import display.Positioner;
+import display.*;
 import event.*;
 import javafx.application.Application;
 import javafx.scene.Group;
@@ -20,6 +19,8 @@ public class Main extends Application implements WindowListener, ParabulaListene
 	private static Stage main;
 	private static int state = 0;
 	private static Canvas canvas;
+
+
 	private static Parabulator parabulator;
 	private static Scene scene;
 	private static Positioner pos;
@@ -33,6 +34,7 @@ public class Main extends Application implements WindowListener, ParabulaListene
 	{
 		return parabulator;
 	}
+	public static void setParabulator(Parabulator parabulator) { Main.parabulator = parabulator; }
 
 	public static Scene getScene()
 	{
@@ -86,6 +88,7 @@ public class Main extends Application implements WindowListener, ParabulaListene
 		stage.setHeight(pos.getHeight());
 	}
 
+
 	@Override
 	public void windowMoved(WindowEvent e)
 	{
@@ -112,7 +115,7 @@ public class Main extends Application implements WindowListener, ParabulaListene
 
 	private void checkRunning(WindowEvent e)
 	{
-		if(Double.isInfinite(e.x) || Double.isInfinite(e.y) || Double.isInfinite(e.width) || Double.isInfinite(e.height))
+		if (Double.isInfinite(e.x) || Double.isInfinite(e.y) || Double.isInfinite(e.width) || Double.isInfinite(e.height))
 			System.exit(0);
 	}
 
