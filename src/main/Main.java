@@ -1,5 +1,6 @@
 package main;
 
+import api.ShellShockAPI;
 import display.*;
 import event.*;
 import javafx.application.Application;
@@ -86,6 +87,22 @@ public class Main extends Application implements WindowListener, ParabulaListene
 		stage.setY(pos.getY());
 		stage.setWidth(pos.getWidth());
 		stage.setHeight(pos.getHeight());
+
+		new Thread(() -> {
+			while(true)
+			{
+				Parabulator.setPower(ShellShockAPI.getPower().intValue());
+				Parabulator.setAngle(ShellShockAPI.getAngle().intValue());
+				System.out.println("cocker");
+				try
+				{
+					Thread.sleep(100);
+				} catch(InterruptedException e)
+				{
+					e.printStackTrace();
+				}
+			}
+		}).start();
 	}
 
 

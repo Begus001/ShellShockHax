@@ -1,5 +1,6 @@
 package event;
 
+import api.ShellShockAPI;
 import api.WinAPI;
 import javafx.scene.paint.Color;
 import main.Main;
@@ -7,7 +8,7 @@ import display.*;
 
 public class KeyboardHandler
 {
-	private final int pressTime = 105;
+	private final int pressTime = 100;
 	boolean lctrlPressed = false;
 
 	public KeyboardHandler()
@@ -69,7 +70,6 @@ public class KeyboardHandler
 		switch (key)
 		{
 			case 0xA2:
-				System.out.println("pressed");
 				Main.getScene().setFill(Color.rgb(0, 0, 0, 0.5f));
 				break;
 

@@ -5,6 +5,7 @@ import event.ParabulaListener;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import main.Main;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,8 +15,8 @@ public class Parabulator
 	protected final double timestep = 0.05;
 	protected double width, height;
 	protected List<double[]> points;
-	protected int angle = 69;
-	protected int power = 69;
+	protected static int angle = 69;
+	protected static int power = 69;
 	protected double gravity = 6.02;
 	protected int xOffset = 0, yOffset = 0;
 	protected GraphicsContext gc;
@@ -44,7 +45,7 @@ public class Parabulator
 		draw();
 	}
 
-	public int getAngle()
+	public static int getAngle()
 	{
 		return angle;
 	}
@@ -54,10 +55,11 @@ public class Parabulator
 		return 0;
 	}
 
-	public void setAngle(int angle)
+	public static void setAngle(int angle)
 	{
-		this.angle = angle;
-		invokeParabulaChanged();
+		if(angle == 1000) return;
+		Parabulator.angle = angle;
+		Main.getParabulator().invokeParabulaChanged();
 	}
 
 	public void invokeParabulaChanged()
@@ -73,15 +75,15 @@ public class Parabulator
 		return power * Math.sin(Math.toRadians(angle)) / gravity;
 	}
 
-	public int getPower()
+	public static int getPower()
 	{
 		return power;
 	}
 
-	public void setPower(int power)
+	public static void setPower(int power)
 	{
-		this.power = power;
-		invokeParabulaChanged();
+		Parabulator.power = power;
+		Main.getParabulator().invokeParabulaChanged();
 	}
 
 	public int getxOffset()
@@ -143,7 +145,8 @@ public class Parabulator
 		yOffset = yOffsetPrev;
 
 		gc.setFont(new Font(24));
-		gc.fillText("Power: " + power + " Angle: " + (angle > 90 ? 180 - angle : angle) + " " + getMode(), 15, 100);
+		int displayAngle = angle % 360 > 90 ? 180 - angle % 360 : angle % 360;
+//		gc.fillText("Power: " + power + " Angle: " + displayAngle + " " + getMode(), 15, 100);
 
 	}
 
