@@ -12,112 +12,23 @@ import java.util.List;
 
 public class Parabulator
 {
-	protected final double timestep = 0.05;
-	protected double width, height;
-	protected List<double[]> points;
+	protected static final double timestep = 0.05;
+	protected static final double gravity = 6.02;
+
+	protected static final List<ParabulaListener> listeners = new ArrayList<>();
+
 	protected static int angle = 69;
 	protected static int power = 69;
-	protected double gravity = 6.02;
-	protected int xOffset = 0, yOffset = 0;
-	protected GraphicsContext gc;
-	protected List<ParabulaListener> listeners = new ArrayList<>();
+	protected static double width, height;
 
-	public Parabulator(GraphicsContext gc, double width, double height)
+	protected static int xOffset = 0, yOffset = 0;
+	protected static GraphicsContext gc;
+
+	protected final List<double[]> points = new ArrayList<>();
+
+	public Parabulator()
 	{
-		this.gc = gc;
-		this.width = width;
-		this.height = height;
-
-		points = new ArrayList<>();
 		draw();
-	}
-
-	public Parabulator(Parabulator toCopy)
-	{
-		this(toCopy.gc, toCopy.width, toCopy.height);
-		points = toCopy.points;
-		angle = toCopy.angle;
-		power = toCopy.power;
-		gravity = toCopy.gravity;
-		xOffset = toCopy.xOffset;
-		yOffset = toCopy.yOffset;
-		listeners = toCopy.listeners;
-		draw();
-	}
-
-	public static int getAngle()
-	{
-		return angle;
-	}
-
-	public int getType()
-	{
-		return 0;
-	}
-
-	public static void setAngle(int angle)
-	{
-		if(angle == 1000) return;
-		Parabulator.angle = angle;
-		Main.getParabulator().invokeParabulaChanged();
-	}
-
-	public void invokeParabulaChanged()
-	{
-		for (ParabulaListener listener : listeners)
-		{
-			listener.parabulaChanged(new ParabulaEvent(this, xOffset, yOffset, angle, power, gravity));
-		}
-	}
-
-	protected double getApex()
-	{
-		return power * Math.sin(Math.toRadians(angle)) / gravity;
-	}
-
-	public static int getPower()
-	{
-		return power;
-	}
-
-	public static void setPower(int power)
-	{
-		Parabulator.power = power;
-		Main.getParabulator().invokeParabulaChanged();
-	}
-
-	public int getxOffset()
-	{
-		return xOffset;
-	}
-
-	public void setxOffset(int xOffset)
-	{
-		this.xOffset = xOffset;
-		invokeParabulaChanged();
-	}
-
-	public int getyOffset()
-	{
-		return yOffset;
-	}
-
-	public void setyOffset(int yOffset)
-	{
-		this.yOffset = yOffset;
-		invokeParabulaChanged();
-	}
-
-	public void setWidth(double width)
-	{
-		this.width = width;
-		invokeParabulaChanged();
-	}
-
-	public void setHeight(double height)
-	{
-		this.height = height;
-		invokeParabulaChanged();
 	}
 
 	public void draw()
@@ -135,7 +46,7 @@ public class Parabulator
 		calculatePoints();
 
 
-		for (int i = 1; i < points.size(); i++)
+		for(int i = 1; i < points.size(); i++)
 		{
 			gc.strokeLine(points.get(i)[0], points.get(i)[1], points.get(i - 1)[0], points.get(i - 1)[1]);
 			//			System.out.printf("drawing %f/%f %f/%f\n", points.get(i)[0], points.get(i)[1], points.get(i - 1)[0], points.get(i - 1)[1]);
@@ -146,7 +57,7 @@ public class Parabulator
 
 		gc.setFont(new Font(24));
 		int displayAngle = angle % 360 > 90 ? 180 - angle % 360 : angle % 360;
-//		gc.fillText("Power: " + power + " Angle: " + displayAngle + " " + getMode(), 15, 100);
+		gc.fillText("Power: " + power + " Angle: " + displayAngle + " " + getMode(), 15, 100);
 
 	}
 
@@ -156,7 +67,22 @@ public class Parabulator
 		points.clear();
 	}
 
-	protected double[] GetPoint(double t)
+	private void calculatePoints()
+	{
+		double t = 0;
+		while(true)
+		{
+			double[] point = getPoint(t);
+			points.add(point);
+
+			if(point[0] < 0 || point[0] > width || point[1] > height)
+				break;
+
+			t += timestep;
+		}
+	}
+
+	protected double[] getPoint(double t)
 	{
 		double[] point = new double[2];
 		point[0] = xOffset + (power * t * Math.cos(Math.toRadians(angle))) * width / 1280;
@@ -164,29 +90,99 @@ public class Parabulator
 		return point;
 	}
 
-	private void calculatePoints()
+	public Parabulator(GraphicsContext gc, double width, double height)
 	{
-		double t = 0;
-		while (true)
+		Parabulator.gc = gc;
+		Parabulator.width = width;
+		Parabulator.height = height;
+
+		draw();
+	}
+
+	public static int getAngle()
+	{
+		return angle;
+	}
+
+	public static void setAngle(int angle)
+	{
+		if(angle == 1000)
+			return;
+		Parabulator.angle = angle;
+		invokeParabulaChanged();
+	}
+
+	public static void invokeParabulaChanged()
+	{
+		for(ParabulaListener listener : listeners)
 		{
-			double[] point = GetPoint(t);
-			points.add(point);
-
-			if (point[0] < 0 || point[0] > width || point[1] > height)
-				break;
-
-			t += timestep;
+			listener.parabulaChanged(new ParabulaEvent(Main.getParabulator(), xOffset, yOffset, angle, power, gravity));
 		}
 	}
 
-	public void addParabulaListener(ParabulaListener listener)
+	public static int getPower()
+	{
+		return power;
+	}
+
+	public static void setPower(int power)
+	{
+		Parabulator.power = power;
+		invokeParabulaChanged();
+	}
+
+	public static int getyOffset()
+	{
+		return yOffset;
+	}
+
+	public static void setyOffset(int offset)
+	{
+		yOffset = offset;
+		invokeParabulaChanged();
+	}
+
+	public static void setWidth(double w)
+	{
+		width = w;
+		invokeParabulaChanged();
+	}
+
+	public static void setHeight(double h)
+	{
+		height = h;
+		invokeParabulaChanged();
+	}
+
+	public static void addParabulaListener(ParabulaListener listener)
 	{
 		listeners.add(listener);
 	}
 
-	public void removeParabulaListener(ParabulaListener listener)
+	public static void removeParabulaListener(ParabulaListener listener)
 	{
 		listeners.remove(listener);
+	}
+
+	public static int getxOffset()
+	{
+		return xOffset;
+	}
+
+	public static void setxOffset(int offset)
+	{
+		xOffset = offset;
+		invokeParabulaChanged();
+	}
+
+	public int getType()
+	{
+		return 0;
+	}
+
+	protected double getApex()
+	{
+		return power * Math.sin(Math.toRadians(angle)) / gravity;
 	}
 
 	public String getMode()

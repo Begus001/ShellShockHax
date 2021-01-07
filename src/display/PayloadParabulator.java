@@ -15,12 +15,12 @@ public class PayloadParabulator extends Parabulator
 	}
 
 
-	public PayloadParabulator(Parabulator toCopy)
+	public PayloadParabulator()
 	{
-		super(toCopy);
+		super();
 	}
 
-	protected double[] GetPoint(double t)
+	protected double[] getPoint(double t)
 	{
 		double[] point = new double[2];
 		if (t < getApex() && getApex() <= t + timestep)

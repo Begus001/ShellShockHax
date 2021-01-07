@@ -1,14 +1,14 @@
 package main;
 
 import api.ShellShockAPI;
-import display.*;
+import display.Parabulator;
+import display.Positioner;
 import event.*;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -35,6 +35,7 @@ public class Main extends Application implements WindowListener, ParabulaListene
 	{
 		return parabulator;
 	}
+
 	public static void setParabulator(Parabulator parabulator) { Main.parabulator = parabulator; }
 
 	public static Scene getScene()
@@ -75,34 +76,19 @@ public class Main extends Application implements WindowListener, ParabulaListene
 
 		parabulator = new Parabulator(gc, pos.getWidth(), pos.getHeight());
 		parabulator.draw();
+		ShellShockAPI.listen();
 
 		stage.show();
 
 		scene.addEventFilter(MouseEvent.MOUSE_CLICKED, new event.MouseHandler());
 		new KeyboardHandler();
-		parabulator.addParabulaListener(this);
+		Parabulator.addParabulaListener(this);
 		pos.addWindowListener(this);
 
 		stage.setX(pos.getX());
 		stage.setY(pos.getY());
 		stage.setWidth(pos.getWidth());
 		stage.setHeight(pos.getHeight());
-
-		new Thread(() -> {
-			while(true)
-			{
-				Parabulator.setPower(ShellShockAPI.getPower().intValue());
-				Parabulator.setAngle(ShellShockAPI.getAngle().intValue());
-				System.out.println("cocker");
-				try
-				{
-					Thread.sleep(100);
-				} catch(InterruptedException e)
-				{
-					e.printStackTrace();
-				}
-			}
-		}).start();
 	}
 
 
@@ -124,15 +110,15 @@ public class Main extends Application implements WindowListener, ParabulaListene
 		canvas.setWidth(e.width);
 		canvas.setHeight(e.height);
 
-		parabulator.setWidth(e.width);
-		parabulator.setHeight(e.height);
+		Parabulator.setWidth(e.width);
+		Parabulator.setHeight(e.height);
 
 		checkRunning(e);
 	}
 
 	private void checkRunning(WindowEvent e)
 	{
-		if (Double.isInfinite(e.x) || Double.isInfinite(e.y) || Double.isInfinite(e.width) || Double.isInfinite(e.height))
+		if(Double.isInfinite(e.x) || Double.isInfinite(e.y) || Double.isInfinite(e.width) || Double.isInfinite(e.height))
 			System.exit(0);
 	}
 

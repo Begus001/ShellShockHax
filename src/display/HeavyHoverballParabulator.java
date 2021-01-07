@@ -1,30 +1,18 @@
 package display;
 
-import event.ParabulaListener;
-import javafx.scene.canvas.GraphicsContext;
-
-import java.util.ArrayList;
-import java.util.List;
-
 public class HeavyHoverballParabulator extends Parabulator
 {
 	private final double hoverTime = 9.49;
 
-
-	public int getType()
+	public HeavyHoverballParabulator()
 	{
-		return 2;
+		super();
 	}
 
-	public HeavyHoverballParabulator (Parabulator toCopy)
-	{
-		super(toCopy);
-	}
-
-	protected double[] GetPoint(double t)
+	protected double[] getPoint(double t)
 	{
 		double[] point = new double[2];
-		if (t < getApex() && getApex() <= t + timestep)
+		if(t < getApex() && getApex() <= t + timestep)
 		{
 			xOffset += (int) Math.round((power * Math.cos(Math.toRadians(angle))) * hoverTime * width / 1916);
 		}
@@ -33,7 +21,13 @@ public class HeavyHoverballParabulator extends Parabulator
 		return point;
 	}
 
-	public String getMode() {
+	public int getType()
+	{
+		return 2;
+	}
+
+	public String getMode()
+	{
 		return "Heavy hoverball mode";
 	}
 }

@@ -1,5 +1,6 @@
 package event;
 
+import display.Parabulator;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
@@ -13,9 +14,8 @@ public class MouseHandler implements EventHandler<MouseEvent>
 	{
 		if(e.getEventType() == MouseEvent.MOUSE_CLICKED)
 		{
-			Main.getParabulator().setxOffset((int) e.getX());
-			Main.getParabulator().setyOffset((int) (Main.getPos().getHeight() - e.getY()));
-			System.out.printf("%d/%d   %f/%f\n", Main.getParabulator().getxOffset(), Main.getParabulator().getyOffset(), e.getX(), Main.getPos().getHeight() - e.getY());
+			Parabulator.setxOffset((int) e.getX());
+			Parabulator.setyOffset((int) (Main.getPos().getHeight() - e.getY()));
 		}
 	}
 }

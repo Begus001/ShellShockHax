@@ -74,27 +74,27 @@ public class KeyboardHandler
 				break;
 
 			case 0x49:
-				power = (int) Main.getParabulator().getPower();
-				if (Main.getParabulator().getPower() < 100)
-					Main.getParabulator().setPower(power + 1);
+				power = (int) Parabulator.getPower();
+				if (Parabulator.getPower() < 100)
+					Parabulator.setPower(power + 1);
 				Thread.sleep(pressTime);
 				break;
 
 			case 0x4A:
-				angle = Main.getParabulator().getAngle();
-				Main.getParabulator().setAngle(angle + 1);
+				angle = Parabulator.getAngle();
+				Parabulator.setAngle(angle + 1);
 				Thread.sleep(pressTime);
 				break;
 
 			case 0x4B:
-				power = (int) Main.getParabulator().getPower();
-				Main.getParabulator().setPower(power - 1);
+				power = (int) Parabulator.getPower();
+				Parabulator.setPower(power - 1);
 				Thread.sleep(pressTime);
 				break;
 
 			case 0x4C:
-				angle = Main.getParabulator().getAngle();
-				Main.getParabulator().setAngle(angle - 1);
+				angle = Parabulator.getAngle();
+				Parabulator.setAngle(angle - 1);
 				Thread.sleep(pressTime);
 				break;
 
@@ -102,25 +102,25 @@ public class KeyboardHandler
 				switch (Main.getParabulator().getType())
 				{
 					case 0:
-						Main.setParabulator(new HoverballParabulator(Main.getParabulator()));
+						Main.setParabulator(new HoverballParabulator());
 						break;
 					case 1:
-						Main.setParabulator(new HeavyHoverballParabulator(Main.getParabulator()));
+						Main.setParabulator(new HeavyHoverballParabulator());
 						break;
 					case 2:
-						Main.setParabulator(new BatteringRamParabulator(Main.getParabulator()));
+						Main.setParabulator(new BatteringRamParabulator());
 						break;
 					case 3:
-						Main.setParabulator(new BoomerangParabulator(Main.getParabulator()));
+						Main.setParabulator(new BoomerangParabulator());
 						break;
 					case 4:
-						Main.setParabulator(new PayloadParabulator(Main.getParabulator()));
+						Main.setParabulator(new PayloadParabulator());
 						break;
 					case 5:
-						Main.setParabulator(new FighterJetParabulator(Main.getParabulator()));
+						Main.setParabulator(new FighterJetParabulator());
 						break;
 					case 6:
-						Main.setParabulator(new Parabulator(Main.getParabulator()));
+						Main.setParabulator(new Parabulator());
 						break;
 				}
 				Thread.sleep(pressTime * 2);
@@ -133,7 +133,6 @@ public class KeyboardHandler
 		switch (key)
 		{
 			case 0xA2:
-				System.out.println("released");
 				Main.getScene().setFill(Color.rgb(0, 0, 0, 0.0f));
 				WinAPI.focusWindow(Main.getPos().getHwnd());
 				break;
