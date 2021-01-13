@@ -36,6 +36,7 @@ public class KeyboardHandler
 		short kKey = WinAPI.getKey(0x4B);
 		short lKey = WinAPI.getKey(0x4C);
 		short uKey = WinAPI.getKey(0x55);
+		short lshift = WinAPI.getKey(0xA0);
 
 		if ((lctrl & 0xFF00) > 0 && !lctrlPressed)
 		{
@@ -62,6 +63,8 @@ public class KeyboardHandler
 
 		if ((uKey & 0xFF00) > 0)
 			keyPressed((short) 0x55);
+		if ((lshift & 0xFF00) > 0)
+			keyPressed((short) 0xA0);
 	}
 
 	private void keyPressed(short key) throws InterruptedException
@@ -120,10 +123,18 @@ public class KeyboardHandler
 						Main.setParabulator(new FighterJetParabulator());
 						break;
 					case 6:
+						Main.setParabulator(new BFGParabulator());
+						break;
+					case 7:
 						Main.setParabulator(new Parabulator());
 						break;
 				}
 				Thread.sleep(pressTime * 2);
+				break;
+			case 0xA0:
+				Main.setOverridden(!Main.getOverridden());
+				Thread.sleep(pressTime * 2);
+				Parabulator.setPower(Parabulator.getPower());
 				break;
 		}
 	}

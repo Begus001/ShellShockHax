@@ -4,7 +4,9 @@ package api;
 import com.sun.jna.Library;
 import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.Native;
+
 import display.Parabulator;
+import main.Main;
 
 public class ShellShockAPI
 {
@@ -14,8 +16,11 @@ public class ShellShockAPI
 		{
 			while(true)
 			{
-				Parabulator.setPower(getPower());
-				Parabulator.setAngle(getAngle());
+				if (!Main.getOverridden())
+				{
+					Parabulator.setPower(getPower());
+					Parabulator.setAngle(getAngle());
+				}
 				try
 				{
 					Thread.sleep(100);

@@ -14,6 +14,8 @@ public class Parabulator
 {
 	protected static final double timestep = 0.05;
 	protected static final double gravity = 6.02;
+	protected static final int wind = 0;
+	protected static final double windmult = 0.00765;
 
 	protected static final List<ParabulaListener> listeners = new ArrayList<>();
 
@@ -57,7 +59,7 @@ public class Parabulator
 
 		gc.setFont(new Font(24));
 		int displayAngle = angle % 360 > 90 ? 180 - angle % 360 : angle % 360;
-		gc.fillText("Power: " + power + " Angle: " + displayAngle + " " + getMode(), 15, 100);
+		gc.fillText("Power: " + power + " Angle: " + displayAngle + " " + getMode() + " " + (Main.getOverridden() ? "Overridden" : ""), 15, 100);
 
 	}
 
@@ -85,7 +87,7 @@ public class Parabulator
 	protected double[] getPoint(double t)
 	{
 		double[] point = new double[2];
-		point[0] = xOffset + (power * t * Math.cos(Math.toRadians(angle))) * width / 1280;
+		point[0] = xOffset + (power * t * Math.cos(Math.toRadians(angle)) + wind * windmult * t * t / 2) * width / 1280;
 		point[1] = height - yOffset - ((power * t * Math.sin(Math.toRadians(angle)) - (1.0f / 2.0f) * gravity * Math.pow(t, 2)) * width / 1280);
 		return point;
 	}
