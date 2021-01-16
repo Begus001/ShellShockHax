@@ -11,10 +11,12 @@ import java.util.concurrent.TimeUnit;
 public class KeyboardHandler
 {
 	private final int pressTime = 75;
+	private boolean delay = false;
+
 	private boolean lCtrlPressed = false;
 	private boolean lShiftPressed = false;
 	private boolean lShiftToggled = false;
-	private boolean delay = false;
+	private boolean uKeyPressed = false;
 
 	public KeyboardHandler()
 	{
@@ -40,6 +42,11 @@ public class KeyboardHandler
 		else
 			lShiftReleased();
 
+		if(WinAPI.getKey(Keys.uKey.val))
+			uKeyPressed();
+		else
+			uKeyReleased();
+
 		if(!ShellShockAPI.isOverridden())
 			return;
 
@@ -54,9 +61,6 @@ public class KeyboardHandler
 
 		if(WinAPI.getKey(Keys.lKey.val))
 			lKeyPressed();
-
-		if(WinAPI.getKey(Keys.uKey.val))
-			uKeyPressed();
 
 		if(delay)
 			sleep(pressTime);
@@ -140,6 +144,10 @@ public class KeyboardHandler
 
 	private void uKeyPressed()
 	{
+		if(uKeyPressed)
+			return;
+		uKeyPressed = true;
+
 		switch(Main.getParabulator().getType())
 		{
 			case 0:
@@ -166,8 +174,13 @@ public class KeyboardHandler
 			case 7:
 				Main.setParabulator(new Parabulator());
 		}
+	}
 
-		sleep(pressTime * 2);
+	private void uKeyReleased()
+	{
+		if(!uKeyPressed)
+			return;
+		uKeyPressed = false;
 	}
 
 	public enum Keys
