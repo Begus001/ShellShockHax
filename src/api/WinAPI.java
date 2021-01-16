@@ -29,9 +29,12 @@ public class WinAPI
 		User32.INSTANCE.SetForegroundWindow(hwnd);
 	}
 
-	public static short getKey(int key)
+	public static boolean getKey(int key)
 	{
-		return User32.INSTANCE.GetKeyState(key);
+		short temp = User32.INSTANCE.GetKeyState(key);
+		temp >>= 7;
+
+		return temp != 0;
 	}
 
 	public interface User32 extends StdCallLibrary

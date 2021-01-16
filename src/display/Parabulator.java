@@ -1,5 +1,6 @@
 package display;
 
+import api.ShellShockAPI;
 import event.ParabulaEvent;
 import event.ParabulaListener;
 import javafx.scene.canvas.GraphicsContext;
@@ -59,7 +60,7 @@ public class Parabulator
 
 		gc.setFont(new Font(24));
 		int displayAngle = angle % 360 > 90 ? 180 - angle % 360 : angle % 360;
-		gc.fillText("Power: " + power + " Angle: " + displayAngle + " " + getMode() + " " + (Main.getOverridden() ? "Overridden" : ""), 15, 100);
+		gc.fillText("Power: " + power + " Angle: " + displayAngle + " " + getMode() + " " + (ShellShockAPI.isOverridden() ? "Overridden" : ""), 15, 100);
 
 	}
 

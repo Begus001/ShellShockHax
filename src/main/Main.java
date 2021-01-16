@@ -20,7 +20,6 @@ public class Main extends Application implements WindowListener, ParabulaListene
 	private static Stage main;
 	private static int state = 0;
 	private static Canvas canvas;
-	private static boolean overridden = false;
 
 
 	private static Parabulator parabulator;
@@ -36,9 +35,6 @@ public class Main extends Application implements WindowListener, ParabulaListene
 	{
 		return parabulator;
 	}
-	public static boolean getOverridden() {	return overridden;}
-	public static void setOverridden(boolean overridden) { Main.overridden = overridden;}
-
 
 	public static void setParabulator(Parabulator parabulator) { Main.parabulator = parabulator; }
 

@@ -40,7 +40,6 @@ public class Positioner
 			while(true)
 			{
 				updatePosition();
-				WinAPI.getKey(0xA2);
 			}
 		}).start();
 	}
