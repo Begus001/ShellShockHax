@@ -1,8 +1,8 @@
 package main;
 
 import api.ShellShockAPI;
-import display.Parabulator;
 import display.Positioner;
+import display.parabulators.*;
 import event.*;
 import javafx.application.Application;
 import javafx.scene.Group;
@@ -15,16 +15,19 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Main extends Application implements WindowListener, ParabulaListener
 {
+	private static final List<Parabulator> parabulators = new ArrayList<>();
 	private static Stage main;
 	private static int state = 0;
 	private static Canvas canvas;
-
-
 	private static Parabulator parabulator;
 	private static Scene scene;
 	private static Positioner pos;
+	private static int parabulatorIndex = 0;
 
 	public static Positioner getPos()
 	{
@@ -36,17 +39,35 @@ public class Main extends Application implements WindowListener, ParabulaListene
 		return parabulator;
 	}
 
-	public static void setParabulator(Parabulator parabulator) { Main.parabulator = parabulator; }
-
-	public static Scene getScene()
+	public static void nextParabulator()
 	{
-		return scene;
+		if(parabulatorIndex + 1 >= parabulators.size())
+			parabulatorIndex = 0;
+		else
+			parabulatorIndex++;
+		updateParabulator();
 	}
 
-	public static void main(String[] args)
+	private static void updateParabulator()
 	{
-		Application.launch(args);
+		parabulator = parabulators.get(parabulatorIndex);
 	}
+
+	public static void prevParabulator()
+	{
+		if(parabulatorIndex - 1 < 0)
+			parabulatorIndex = parabulators.size() - 1;
+		else
+			parabulatorIndex--;
+		updateParabulator();
+	}
+
+	public static void setSceneOpaque()
+	{
+		scene.setFill(Color.rgb(0, 0, 0, 0.5f));
+	}
+
+	public static void main(String[] args) { Application.launch(args); }
 
 	@Override
 	public void start(Stage stage)
@@ -67,7 +88,7 @@ public class Main extends Application implements WindowListener, ParabulaListene
 		root.getChildren().add(pane);
 
 		scene = new Scene(root);
-		scene.setFill(Color.rgb(0, 0, 0, 0.0f));
+		setSceneTransparent();
 
 		stage.setScene(scene);
 		stage.initStyle(StageStyle.TRANSPARENT);
@@ -76,6 +97,7 @@ public class Main extends Application implements WindowListener, ParabulaListene
 
 		parabulator = new Parabulator(gc, pos.getWidth(), pos.getHeight());
 		parabulator.draw();
+		loadParabulators();
 		ShellShockAPI.listen();
 
 		stage.show();
@@ -91,6 +113,22 @@ public class Main extends Application implements WindowListener, ParabulaListene
 		stage.setHeight(pos.getHeight());
 	}
 
+	public static void setSceneTransparent()
+	{
+		scene.setFill(Color.rgb(0, 0, 0, 0.0f));
+	}
+
+	private static void loadParabulators()
+	{
+		parabulators.add(parabulator);
+		parabulators.add(new HoverballParabulator());
+		parabulators.add(new HeavyHoverballParabulator());
+		parabulators.add(new BatteringRamParabulator());
+		parabulators.add(new PayloadParabulator());
+		parabulators.add(new BoomerangParabulator());
+		parabulators.add(new BFGParabulator());
+		parabulators.add(new FighterJetParabulator());
+	}
 
 	@Override
 	public void windowMoved(WindowEvent e)

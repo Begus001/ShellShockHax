@@ -1,4 +1,4 @@
-package display;
+package display.parabulators;
 
 public class FighterJetParabulator extends Parabulator
 {

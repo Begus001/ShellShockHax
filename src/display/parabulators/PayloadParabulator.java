@@ -1,10 +1,4 @@
-package display;
-
-import event.ParabulaListener;
-import javafx.scene.canvas.GraphicsContext;
-
-import java.util.ArrayList;
-import java.util.List;
+package display.parabulators;
 
 public class PayloadParabulator extends Parabulator
 {
@@ -12,12 +6,6 @@ public class PayloadParabulator extends Parabulator
 	public int getType()
 	{
 		return 5;
-	}
-
-
-	public PayloadParabulator()
-	{
-		super();
 	}
 
 	protected double[] getPoint(double t)

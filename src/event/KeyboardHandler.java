@@ -2,7 +2,7 @@ package event;
 
 import api.ShellShockAPI;
 import api.WinAPI;
-import display.*;
+import display.parabulators.*;
 import javafx.scene.paint.Color;
 import main.Main;
 
@@ -17,6 +17,7 @@ public class KeyboardHandler
 	private boolean lShiftPressed = false;
 	private boolean lShiftToggled = false;
 	private boolean uKeyPressed = false;
+	private boolean hKeyPressed = false;
 
 	public KeyboardHandler()
 	{
@@ -46,6 +47,11 @@ public class KeyboardHandler
 			uKeyPressed();
 		else
 			uKeyReleased();
+
+		if(WinAPI.getKey(Keys.hKey.val))
+			hKeyPressed();
+		else
+			hKeyReleased();
 
 		if(!ShellShockAPI.isOverridden())
 			return;
@@ -83,7 +89,7 @@ public class KeyboardHandler
 			return;
 		lCtrlPressed = true;
 
-		Main.getScene().setFill(Color.rgb(0, 0, 0, 0.5f));
+		Main.setSceneOpaque();
 	}
 
 	private void lCtrlReleased()
@@ -92,7 +98,7 @@ public class KeyboardHandler
 			return;
 		lCtrlPressed = false;
 
-		Main.getScene().setFill(Color.rgb(0, 0, 0, 0.0f));
+		Main.setSceneTransparent();
 		WinAPI.focusWindow(Main.getPos().getHwnd());
 	}
 
@@ -148,32 +154,7 @@ public class KeyboardHandler
 			return;
 		uKeyPressed = true;
 
-		switch(Main.getParabulator().getType())
-		{
-			case 0:
-				Main.setParabulator(new HoverballParabulator());
-				break;
-			case 1:
-				Main.setParabulator(new HeavyHoverballParabulator());
-				break;
-			case 2:
-				Main.setParabulator(new BatteringRamParabulator());
-				break;
-			case 3:
-				Main.setParabulator(new BoomerangParabulator());
-				break;
-			case 4:
-				Main.setParabulator(new PayloadParabulator());
-				break;
-			case 5:
-				Main.setParabulator(new FighterJetParabulator());
-				break;
-			case 6:
-				Main.setParabulator(new BFGParabulator());
-				break;
-			case 7:
-				Main.setParabulator(new Parabulator());
-		}
+		Main.nextParabulator();
 	}
 
 	private void uKeyReleased()
@@ -181,6 +162,22 @@ public class KeyboardHandler
 		if(!uKeyPressed)
 			return;
 		uKeyPressed = false;
+	}
+
+	private void hKeyPressed()
+	{
+		if(hKeyPressed)
+			return;
+		hKeyPressed = true;
+
+		Main.prevParabulator();
+	}
+
+	private void hKeyReleased()
+	{
+		if(!hKeyPressed)
+			return;
+		hKeyPressed = false;
 	}
 
 	public enum Keys
@@ -191,7 +188,8 @@ public class KeyboardHandler
 		jKey(0x4A),
 		kKey(0x4B),
 		lKey(0x4C),
-		uKey(0x55);
+		uKey(0x55),
+		hKey(0x48);
 
 		public final int val;
 

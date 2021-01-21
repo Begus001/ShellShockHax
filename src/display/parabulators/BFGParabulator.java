@@ -1,12 +1,8 @@
-package display;
+package display.parabulators;
 
 public class BFGParabulator extends Parabulator
 {
 	protected static double gravity = 6.12;
-	public BFGParabulator()
-	{
-		super();
-	}
 
 	@Override
 	protected double[] getPoint(double t)

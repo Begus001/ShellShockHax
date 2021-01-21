@@ -22,7 +22,7 @@ public class Positioner
 
 		if(hwnd == null)
 		{
-			System.err.printf("The window '%s' could not be found", lockTo);
+			System.err.printf("The window '%s' could not be found\n", lockTo);
 			System.exit(0x01);
 		}
 

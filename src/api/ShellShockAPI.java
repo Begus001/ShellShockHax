@@ -3,7 +3,7 @@ package api;
 
 import com.sun.jna.Library;
 import com.sun.jna.Native;
-import display.Parabulator;
+import display.parabulators.Parabulator;
 
 import java.util.concurrent.TimeUnit;
 

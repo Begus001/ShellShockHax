@@ -1,4 +1,4 @@
-package display;
+package display.parabulators;
 
 import api.ShellShockAPI;
 import event.ParabulaEvent;
@@ -29,8 +29,12 @@ public class Parabulator
 
 	protected final List<double[]> points = new ArrayList<>();
 
-	public Parabulator()
+	public Parabulator(GraphicsContext gc, double width, double height)
 	{
+		Parabulator.gc = gc;
+		Parabulator.width = width;
+		Parabulator.height = height;
+
 		draw();
 	}
 
@@ -85,6 +89,8 @@ public class Parabulator
 		}
 	}
 
+	public Parabulator() {}
+
 	protected double[] getPoint(double t)
 	{
 		double[] point = new double[2];
@@ -93,13 +99,9 @@ public class Parabulator
 		return point;
 	}
 
-	public Parabulator(GraphicsContext gc, double width, double height)
+	public String getMode()
 	{
-		Parabulator.gc = gc;
-		Parabulator.width = width;
-		Parabulator.height = height;
-
-		draw();
+		return "";
 	}
 
 	public static int getAngle()
@@ -186,10 +188,5 @@ public class Parabulator
 	protected double getApex()
 	{
 		return power * Math.sin(Math.toRadians(angle)) / gravity;
-	}
-
-	public String getMode()
-	{
-		return "";
 	}
 }

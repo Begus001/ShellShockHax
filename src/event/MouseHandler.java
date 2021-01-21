@@ -1,7 +1,6 @@
 package event;
 
-import display.Parabulator;
-import javafx.event.Event;
+import display.parabulators.Parabulator;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import main.Main;

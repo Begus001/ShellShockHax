@@ -1,13 +1,8 @@
-package display;
+package display.parabulators;
 
 public class BoomerangParabulator extends Parabulator
 {
 	private final double boomerangmult = 0.0542;
-
-	public BoomerangParabulator()
-	{
-		super();
-	}
 
 	protected double[] getPoint(double t)
 	{
