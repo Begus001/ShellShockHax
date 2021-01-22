@@ -51,6 +51,7 @@ public class Main extends Application implements WindowListener, ParabulaListene
 	private static void updateParabulator()
 	{
 		parabulator = parabulators.get(parabulatorIndex);
+		parabulator.draw();
 	}
 
 	public static void prevParabulator()

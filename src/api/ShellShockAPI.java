@@ -15,31 +15,46 @@ public class ShellShockAPI
 	{
 		new Thread(() ->
 		{
+			int power, angle, lastPower = -1, lastAngle = 270;
+
 			while(true)
 			{
 				if(isOverridden())
 				{
-					try
-					{
-						TimeUnit.MILLISECONDS.sleep(100);
-					} catch(InterruptedException e)
-					{
-						e.printStackTrace();
-					}
+					lastPower = -1;
+					lastAngle = 270;
+					sleep(50);
 					continue;
 				}
 
-				Parabulator.setPower(getPower());
-				Parabulator.setAngle(getAngle());
-				try
+				power = getPower();
+				angle = getAngle();
+
+				if(power < 0 || power > 100 || angle < -90 || angle >= 270 || (power == lastPower && angle == lastAngle))
 				{
-					TimeUnit.MILLISECONDS.sleep(100);
-				} catch(InterruptedException e)
-				{
-					e.printStackTrace();
+					sleep(10);
+					continue;
 				}
+
+				Parabulator.setPower(power);
+				Parabulator.setAngle(angle);
+				lastPower = power;
+				lastAngle = angle;
+
+				sleep(10);
 			}
 		}).start();
+	}
+
+	private static void sleep(long ms)
+	{
+		try
+		{
+			TimeUnit.MILLISECONDS.sleep(ms);
+		} catch(InterruptedException e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 	public static boolean isOverridden()

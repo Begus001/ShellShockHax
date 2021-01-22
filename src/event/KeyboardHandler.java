@@ -26,7 +26,7 @@ public class KeyboardHandler
 			while(true)
 			{
 				listenKeys();
-				sleep(10);
+				sleep(1);
 			}
 		}).start();
 	}
