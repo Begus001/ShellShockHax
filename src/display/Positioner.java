@@ -14,7 +14,6 @@ public class Positioner
 	private WinDef.HWND hwnd;
 	private WinDef.RECT rect;
 	private boolean shadow = true;
-	private double dpi;
 	private double lastX, lastY, lastWidth, lastHeight;
 	public Positioner(String lockTo)
 	{
@@ -46,12 +45,12 @@ public class Positioner
 
 	public double getX()
 	{
-		return shadow ? rect.left + 10.0f / dpi : rect.left;
+		return shadow ? rect.left + 10.0f : rect.left;
 	}
 
 	public double getY()
 	{
-		return shadow ? rect.top + 45.0f / dpi : rect.top;
+		return shadow ? rect.top + 45.0f : rect.top;
 	}
 
 	public double getWidth()
@@ -67,7 +66,6 @@ public class Positioner
 	public void updatePosition()
 	{
 		rect = WinAPI.getWindowPosition(hwnd);
-		dpi = WinAPI.getDPI(hwnd) / 96.0d;
 
 		if(getX() != lastX || getY() != lastY)
 		{
@@ -94,12 +92,12 @@ public class Positioner
 
 	public double getX1()
 	{
-		return shadow ? rect.right - 10.0f / dpi : rect.right;
+		return shadow ? rect.right - 10.0f : rect.right;
 	}
 
 	public double getY1()
 	{
-		return shadow ? rect.bottom - 10.0f / dpi : rect.bottom;
+		return shadow ? rect.bottom - 10.0f : rect.bottom;
 	}
 
 	public WinDef.HWND getHwnd()
