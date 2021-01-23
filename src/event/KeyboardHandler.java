@@ -2,22 +2,22 @@ package event;
 
 import api.ShellShockAPI;
 import api.WinAPI;
-import display.parabulators.*;
-import javafx.scene.paint.Color;
+import display.parabulators.Parabulator;
 import main.Main;
 
 import java.util.concurrent.TimeUnit;
 
 public class KeyboardHandler
 {
+	private static boolean chatMode = false;
 	private final int pressTime = 75;
 	private boolean delay = false;
-
 	private boolean lCtrlPressed = false;
 	private boolean lShiftPressed = false;
 	private boolean lShiftToggled = false;
 	private boolean uKeyPressed = false;
-	private boolean hKeyPressed = false;
+	private boolean oKeyPressed = false;
+	private boolean rShiftPressed = false;
 
 	public KeyboardHandler()
 	{
@@ -31,8 +31,21 @@ public class KeyboardHandler
 		}).start();
 	}
 
-	private void listenKeys()
+	public static boolean isChatMode()
 	{
+		return chatMode;
+	}
+
+	protected void listenKeys()
+	{
+		if(WinAPI.getKey(Keys.rShift.val))
+			rShiftPressed();
+		else
+			rShiftReleased();
+
+		if(chatMode)
+			return;
+
 		if(WinAPI.getKey(Keys.lCtrl.val))
 			lCtrlPressed();
 		else
@@ -43,47 +56,53 @@ public class KeyboardHandler
 		else
 			lShiftReleased();
 
+		if(WinAPI.getKey(Keys.oKey.val))
+			oKeyPressed();
+		else
+			oKeyReleased();
+
 		if(WinAPI.getKey(Keys.uKey.val))
 			uKeyPressed();
 		else
 			uKeyReleased();
 
-		if(WinAPI.getKey(Keys.hKey.val))
-			hKeyPressed();
-		else
-			hKeyReleased();
+		if(ShellShockAPI.isOverridden())
+		{
+			if(WinAPI.getKey(Keys.iKey.val))
+				iKeyPressed();
 
-		if(!ShellShockAPI.isOverridden())
-			return;
+			if(WinAPI.getKey(Keys.jKey.val))
+				jKeyPressed();
 
-		if(WinAPI.getKey(Keys.iKey.val))
-			iKeyPressed();
+			if(WinAPI.getKey(Keys.kKey.val))
+				kKeyPressed();
 
-		if(WinAPI.getKey(Keys.jKey.val))
-			jKeyPressed();
-
-		if(WinAPI.getKey(Keys.kKey.val))
-			kKeyPressed();
-
-		if(WinAPI.getKey(Keys.lKey.val))
-			lKeyPressed();
+			if(WinAPI.getKey(Keys.lKey.val))
+				lKeyPressed();
+		}
 
 		if(delay)
 			sleep(pressTime);
 	}
 
-	private void sleep(long ms)
+	private void rShiftPressed()
 	{
-		try
-		{
-			TimeUnit.MILLISECONDS.sleep(ms);
-		} catch(InterruptedException e)
-		{
-			e.printStackTrace();
-		}
+		if(rShiftPressed)
+			return;
+		rShiftPressed = true;
+
+		chatMode = !chatMode;
+		Parabulator.invokeParabulaChanged();
 	}
 
-	private void lCtrlPressed()
+	private void rShiftReleased()
+	{
+		if(!rShiftPressed)
+			return;
+		rShiftPressed = false;
+	}
+
+	protected void lCtrlPressed()
 	{
 		if(lCtrlPressed)
 			return;
@@ -92,7 +111,7 @@ public class KeyboardHandler
 		Main.setSceneOpaque();
 	}
 
-	private void lCtrlReleased()
+	protected void lCtrlReleased()
 	{
 		if(!lCtrlPressed)
 			return;
@@ -102,7 +121,7 @@ public class KeyboardHandler
 		WinAPI.focusWindow(Main.getPos().getHwnd());
 	}
 
-	private void lShiftPressed()
+	protected void lShiftPressed()
 	{
 		if(lShiftPressed)
 			return;
@@ -113,14 +132,46 @@ public class KeyboardHandler
 		Parabulator.invokeParabulaChanged();
 	}
 
-	private void lShiftReleased()
+	protected void lShiftReleased()
 	{
 		if(!lShiftPressed)
 			return;
 		lShiftPressed = false;
 	}
 
-	private void iKeyPressed()
+	protected void oKeyPressed()
+	{
+		if(oKeyPressed)
+			return;
+		oKeyPressed = true;
+
+		Main.nextParabulator();
+	}
+
+	protected void oKeyReleased()
+	{
+		if(!oKeyPressed)
+			return;
+		oKeyPressed = false;
+	}
+
+	protected void uKeyPressed()
+	{
+		if(uKeyPressed)
+			return;
+		uKeyPressed = true;
+
+		Main.prevParabulator();
+	}
+
+	protected void uKeyReleased()
+	{
+		if(!uKeyPressed)
+			return;
+		uKeyPressed = false;
+	}
+
+	protected void iKeyPressed()
 	{
 		if(Parabulator.getPower() < 100)
 			Parabulator.setPower(Parabulator.getPower() + 1);
@@ -128,13 +179,13 @@ public class KeyboardHandler
 		delay = true;
 	}
 
-	private void jKeyPressed()
+	protected void jKeyPressed()
 	{
 		Parabulator.setAngle(Parabulator.getAngle() + 1);
 		delay = true;
 	}
 
-	private void kKeyPressed()
+	protected void kKeyPressed()
 	{
 		if(Parabulator.getPower() > 0)
 			Parabulator.setPower(Parabulator.getPower() - 1);
@@ -142,45 +193,24 @@ public class KeyboardHandler
 		delay = true;
 	}
 
-	private void lKeyPressed()
+	protected void lKeyPressed()
 	{
 		Parabulator.setAngle(Parabulator.getAngle() - 1);
 		delay = true;
 	}
 
-	private void uKeyPressed()
+	protected void sleep(long ms)
 	{
-		if(uKeyPressed)
-			return;
-		uKeyPressed = true;
-
-		Main.nextParabulator();
+		try
+		{
+			TimeUnit.MILLISECONDS.sleep(ms);
+		} catch(InterruptedException e)
+		{
+			e.printStackTrace();
+		}
 	}
 
-	private void uKeyReleased()
-	{
-		if(!uKeyPressed)
-			return;
-		uKeyPressed = false;
-	}
-
-	private void hKeyPressed()
-	{
-		if(hKeyPressed)
-			return;
-		hKeyPressed = true;
-
-		Main.prevParabulator();
-	}
-
-	private void hKeyReleased()
-	{
-		if(!hKeyPressed)
-			return;
-		hKeyPressed = false;
-	}
-
-	public enum Keys
+	private enum Keys
 	{
 		lCtrl(0xA2),
 		lShift(0xA0),
@@ -189,7 +219,8 @@ public class KeyboardHandler
 		kKey(0x4B),
 		lKey(0x4C),
 		uKey(0x55),
-		hKey(0x48);
+		oKey(0x4F),
+		rShift(0xA1);
 
 		public final int val;
 

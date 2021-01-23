@@ -1,6 +1,7 @@
 package display.parabulators;
 
 import api.ShellShockAPI;
+import event.KeyboardHandler;
 import event.ParabulaEvent;
 import event.ParabulaListener;
 import javafx.scene.canvas.GraphicsContext;
@@ -25,9 +26,12 @@ public class Parabulator
 	protected static double width, height;
 
 	protected static int xOffset = 0, yOffset = 0;
+
 	protected static GraphicsContext gc;
 
 	protected final List<double[]> points = new ArrayList<>();
+
+	protected final String name = "Default";
 
 	public Parabulator(GraphicsContext gc, double width, double height)
 	{
@@ -36,6 +40,14 @@ public class Parabulator
 		Parabulator.height = height;
 
 		draw();
+	}
+
+	public Parabulator() {}
+
+	public void clear()
+	{
+		gc.clearRect(0, 0, width, height);
+		points.clear();
 	}
 
 	public void draw()
@@ -62,19 +74,19 @@ public class Parabulator
 		xOffset = xOffsetPrev;
 		yOffset = yOffsetPrev;
 
-		gc.setFont(new Font(24));
+		int fontSize = 20;
+		int lineSpacing = 5;
+		int[] textPosition = new int[]{15, 80};
 		int displayAngle = angle % 360 > 90 ? 180 - angle % 360 : angle % 360;
-		gc.fillText("Power: " + power + " Angle: " + displayAngle + " " + getMode() + " " + (ShellShockAPI.isOverridden() ? "Overridden" : ""), 15, 100);
 
+		gc.setFont(new Font(fontSize));
+		gc.fillText("Power: " + power + " Angle: " + displayAngle, textPosition[0], textPosition[1]);
+		gc.fillText("Weapon: " + getName(), textPosition[0], textPosition[1] + fontSize + lineSpacing);
+		gc.fillText("Overridden: " + (ShellShockAPI.isOverridden() ? "Yes" : "No"), textPosition[0], textPosition[1] + (fontSize + lineSpacing) * 2);
+		gc.fillText(KeyboardHandler.isChatMode() ? "CHAT MODE" : "", textPosition[0], textPosition[1] + (fontSize + lineSpacing) * 3);
 	}
 
-	private void clear()
-	{
-		gc.clearRect(0, 0, width, height);
-		points.clear();
-	}
-
-	private void calculatePoints()
+	protected void calculatePoints()
 	{
 		double t = 0;
 		while(true)
@@ -89,8 +101,6 @@ public class Parabulator
 		}
 	}
 
-	public Parabulator() {}
-
 	protected double[] getPoint(double t)
 	{
 		double[] point = new double[2];
@@ -99,9 +109,9 @@ public class Parabulator
 		return point;
 	}
 
-	public String getMode()
+	protected String getName()
 	{
-		return "";
+		return name;
 	}
 
 	public static int getAngle()
@@ -178,11 +188,6 @@ public class Parabulator
 	{
 		xOffset = offset;
 		invokeParabulaChanged();
-	}
-
-	public int getType()
-	{
-		return 0;
 	}
 
 	protected double getApex()

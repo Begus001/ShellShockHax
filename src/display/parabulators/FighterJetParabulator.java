@@ -2,11 +2,15 @@ package display.parabulators;
 
 public class FighterJetParabulator extends Parabulator
 {
-	public FighterJetParabulator()
+	protected final String name = "Kampffighterjet";
+
+	@Override
+	protected String getName()
 	{
-		super();
+		return name;
 	}
 
+	@Override
 	protected double[] getPoint(double t)
 	{
 		double[] point = new double[2];
@@ -22,15 +26,5 @@ public class FighterJetParabulator extends Parabulator
 			point[1] = getPoint(getApex())[1];
 		}
 		return point;
-	}
-
-	public int getType()
-	{
-		return 6;
-	}
-
-	public String getMode()
-	{
-		return "Kampffighterjet mode";
 	}
 }

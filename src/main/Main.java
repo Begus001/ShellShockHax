@@ -129,6 +129,7 @@ public class Main extends Application implements WindowListener, ParabulaListene
 		parabulators.add(new BoomerangParabulator());
 		parabulators.add(new BFGParabulator());
 		parabulators.add(new FighterJetParabulator());
+		parabulators.add(new ThreeDeeParabulator());
 	}
 
 	@Override
