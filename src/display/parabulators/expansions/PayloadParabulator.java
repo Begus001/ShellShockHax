@@ -1,4 +1,6 @@
-package display.parabulators;
+package display.parabulators.expansions;
+
+import display.parabulators.Parabulator;
 
 public class PayloadParabulator extends Parabulator
 {
@@ -15,8 +17,8 @@ public class PayloadParabulator extends Parabulator
 							height - yOffset - ((power * getApex() * Math.sin(Math.toRadians(angle)) - (1.0f / 2.0f) * gravity * Math.pow(getApex(), 2)) * width / 1280)
 			});
 			points.add(new double[]{
-					xOffset + (power * getApex() * Math.cos(Math.toRadians(angle))+ wind * windmult * getApex() * getApex() / 2) * width / 1280,
-					height
+							xOffset + (power * getApex() * Math.cos(Math.toRadians(angle)) + wind * windmult * getApex() * getApex() / 2) * width / 1280,
+							height
 			});
 			points.add(new double[]{
 							xOffset + (power * getApex() * Math.cos(Math.toRadians(angle)) + wind * windmult * getApex() * getApex() / 2) * width / 1280,

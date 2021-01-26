@@ -1,15 +1,11 @@
-package display.parabulators;
+package display.parabulators.expansions;
+
+import display.parabulators.Parabulator;
 
 public class BatteringRamParabulator extends Parabulator
 {
 	protected static double gravityfactor = 4.9;
 	protected final String name = "Battering Ram";
-
-	@Override
-	public String getName()
-	{
-		return name;
-	}
 
 	@Override
 	protected double[] getPoint(double t)
@@ -26,5 +22,11 @@ public class BatteringRamParabulator extends Parabulator
 							gravity * gravityfactor * Math.pow(t - getApex(), 2) / 2) * width / 1280);
 		}
 		return point;
+	}
+
+	@Override
+	public String getName()
+	{
+		return name;
 	}
 }

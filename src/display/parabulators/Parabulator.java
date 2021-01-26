@@ -12,7 +12,7 @@ import main.Main;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Parabulator
+public class Parabulator implements Comparable<Parabulator>
 {
 	protected static final double timestep = 0.05;
 	protected static final double gravity = 6.02;
@@ -109,9 +109,13 @@ public class Parabulator
 		return point;
 	}
 
-	protected String getName()
+	@Override
+	public int compareTo(Parabulator p)
 	{
-		return name;
+		if(getName() == null || p.getName() == null)
+			return 0;
+
+		return getName().compareTo(p.getName());
 	}
 
 	public static int getAngle()
@@ -193,5 +197,10 @@ public class Parabulator
 	protected double getApex()
 	{
 		return power * Math.sin(Math.toRadians(angle)) / gravity;
+	}
+
+	public String getName()
+	{
+		return name;
 	}
 }

@@ -2,7 +2,7 @@ package main;
 
 import api.ShellShockAPI;
 import display.Positioner;
-import display.parabulators.*;
+import display.parabulators.Parabulator;
 import event.*;
 import javafx.application.Application;
 import javafx.scene.Group;
@@ -68,7 +68,10 @@ public class Main extends Application implements WindowListener, ParabulaListene
 		scene.setFill(Color.rgb(0, 0, 0, 0.5f));
 	}
 
-	public static void main(String[] args) { Application.launch(args); }
+	public static void main(String[] args)
+	{
+		Application.launch(args);
+	}
 
 	@Override
 	public void start(Stage stage)
@@ -122,14 +125,7 @@ public class Main extends Application implements WindowListener, ParabulaListene
 	private static void loadParabulators()
 	{
 		parabulators.add(parabulator);
-		parabulators.add(new HoverballParabulator());
-		parabulators.add(new HeavyHoverballParabulator());
-		parabulators.add(new BatteringRamParabulator());
-		parabulators.add(new PayloadParabulator());
-		parabulators.add(new BoomerangParabulator());
-		parabulators.add(new BFGParabulator());
-		parabulators.add(new FighterJetParabulator());
-		parabulators.add(new ThreeDeeParabulator());
+		parabulators.addAll(ParabulatorLoader.loadParabulators());
 	}
 
 	@Override

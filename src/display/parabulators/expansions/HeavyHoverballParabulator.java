@@ -1,4 +1,6 @@
-package display.parabulators;
+package display.parabulators.expansions;
+
+import display.parabulators.Parabulator;
 
 public class HeavyHoverballParabulator extends Parabulator
 {

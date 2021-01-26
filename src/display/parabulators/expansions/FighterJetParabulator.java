@@ -1,14 +1,10 @@
-package display.parabulators;
+package display.parabulators.expansions;
+
+import display.parabulators.Parabulator;
 
 public class FighterJetParabulator extends Parabulator
 {
 	protected final String name = "Kampffighterjet";
-
-	@Override
-	protected String getName()
-	{
-		return name;
-	}
 
 	@Override
 	protected double[] getPoint(double t)
@@ -26,5 +22,11 @@ public class FighterJetParabulator extends Parabulator
 			point[1] = getPoint(getApex())[1];
 		}
 		return point;
+	}
+
+	@Override
+	public String getName()
+	{
+		return name;
 	}
 }

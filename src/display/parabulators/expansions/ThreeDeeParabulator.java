@@ -1,4 +1,6 @@
-package display.parabulators;
+package display.parabulators.expansions;
+
+import display.parabulators.Parabulator;
 
 public class ThreeDeeParabulator extends Parabulator
 {
@@ -20,7 +22,7 @@ public class ThreeDeeParabulator extends Parabulator
 	}
 
 	@Override
-	protected String getName()
+	public String getName()
 	{
 		return name;
 	}
