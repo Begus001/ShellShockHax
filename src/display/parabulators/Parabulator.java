@@ -9,8 +9,15 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import main.Main;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 public class Parabulator implements Comparable<Parabulator>
 {
@@ -33,89 +40,70 @@ public class Parabulator implements Comparable<Parabulator>
 
 	protected final String name = "Default";
 
-	public Parabulator(GraphicsContext gc, double width, double height)
+	public static void init(GraphicsContext gc, double width, double height)
 	{
 		Parabulator.gc = gc;
 		Parabulator.width = width;
 		Parabulator.height = height;
-
-		draw();
 	}
 
-	public Parabulator() {}
-
-	public void clear()
+	public static List<Parabulator> loadParabulators()
 	{
-		gc.clearRect(0, 0, width, height);
-		points.clear();
-	}
+		List<Parabulator> parabulators = new ArrayList<>();
+		List<String> parabsToLoad = new ArrayList<>();
 
-	public void draw()
-	{
-		clear();
-
-		int xOffsetPrev = xOffset;
-		int yOffsetPrev = yOffset;
-		gc.setStroke(Color.RED);
-
-
-		xOffset = (int) Math.round(xOffset + Math.cos(Math.toRadians(angle)) * 25 * width / 1916);
-		yOffset = (int) Math.round(yOffset + Math.sin(Math.toRadians(angle)) * 25 * width / 1916);
-
-		calculatePoints();
-
-
-		for(int i = 1; i < points.size(); i++)
+		try
 		{
-			gc.strokeLine(points.get(i)[0], points.get(i)[1], points.get(i - 1)[0], points.get(i - 1)[1]);
-			//			System.out.printf("drawing %f/%f %f/%f\n", points.get(i)[0], points.get(i)[1], points.get(i - 1)[0], points.get(i - 1)[1]);
+			String rootPath = Main.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
+
+			if(rootPath.endsWith(".jar"))
+			{
+				ZipFile zip = new ZipFile(rootPath);
+
+				for(Enumeration<?> list = zip.entries(); list.hasMoreElements(); )
+				{
+					ZipEntry current = (ZipEntry) list.nextElement();
+					if(!current.getName().startsWith("display/parabulators/") || !current.getName().endsWith(".class"))
+						continue;
+					parabsToLoad.add(current.getName().replace(".class", "").replace("display/parabulators/", ""));
+				}
+
+				zip.close();
+			} else
+			{
+				File parabulatorDirectory = new File(rootPath + "/display/parabulators");
+
+				for(File current : Objects.requireNonNull(parabulatorDirectory.listFiles()))
+					parabsToLoad.add(current.getName().replace(".class", ""));
+			}
+
+			ClassLoader cl = new URLClassLoader(new URL[]{Parabulator.class.getResource("/")});
+
+			for(String current : parabsToLoad)
+			{
+				Class<?> clazz;
+				try
+				{
+					clazz = cl.loadClass("display.parabulators." + current);
+				} catch(NullPointerException e)
+				{
+					System.err.printf("Couldn't load %s\n", current);
+					continue;
+				}
+
+				parabulators.add((Parabulator) clazz.getConstructor().newInstance());
+				System.out.println("Loaded class " + current);
+			}
+
+		} catch(ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException | URISyntaxException | IOException e)
+		{
+			System.err.println("Couldn't load parabulators");
+			e.printStackTrace();
 		}
 
-		xOffset = xOffsetPrev;
-		yOffset = yOffsetPrev;
+		Collections.sort(parabulators);
 
-		int fontSize = 20;
-		int lineSpacing = 5;
-		int[] textPosition = new int[]{15, 80};
-		int displayAngle = angle % 360 > 90 ? 180 - angle % 360 : angle % 360;
-
-		gc.setFont(new Font(fontSize));
-		gc.fillText("Power: " + power + " Angle: " + displayAngle, textPosition[0], textPosition[1]);
-		gc.fillText("Weapon: " + getName(), textPosition[0], textPosition[1] + fontSize + lineSpacing);
-		gc.fillText("Overridden: " + (ShellShockAPI.isOverridden() ? "Yes" : "No"), textPosition[0], textPosition[1] + (fontSize + lineSpacing) * 2);
-		gc.fillText(KeyboardHandler.isChatMode() ? "CHAT MODE" : "", textPosition[0], textPosition[1] + (fontSize + lineSpacing) * 3);
-	}
-
-	protected void calculatePoints()
-	{
-		double t = 0;
-		while(true)
-		{
-			double[] point = getPoint(t);
-			points.add(point);
-
-			if(point[0] < 0 || point[0] > width || point[1] > height)
-				break;
-
-			t += timestep;
-		}
-	}
-
-	protected double[] getPoint(double t)
-	{
-		double[] point = new double[2];
-		point[0] = xOffset + (power * t * Math.cos(Math.toRadians(angle)) + wind * windmult * t * t / 2) * width / 1280;
-		point[1] = height - yOffset - ((power * t * Math.sin(Math.toRadians(angle)) - (1.0f / 2.0f) * gravity * Math.pow(t, 2)) * width / 1280);
-		return point;
-	}
-
-	@Override
-	public int compareTo(Parabulator p)
-	{
-		if(getName() == null || p.getName() == null)
-			return 0;
-
-		return getName().compareTo(p.getName());
+		return parabulators;
 	}
 
 	public static int getAngle()
@@ -194,13 +182,87 @@ public class Parabulator implements Comparable<Parabulator>
 		invokeParabulaChanged();
 	}
 
-	protected double getApex()
+	public void draw()
 	{
-		return power * Math.sin(Math.toRadians(angle)) / gravity;
+		clear();
+
+		int xOffsetPrev = xOffset;
+		int yOffsetPrev = yOffset;
+		gc.setStroke(Color.RED);
+
+
+		xOffset = (int) Math.round(xOffset + Math.cos(Math.toRadians(angle)) * 25 * width / 1916);
+		yOffset = (int) Math.round(yOffset + Math.sin(Math.toRadians(angle)) * 25 * width / 1916);
+
+		calculatePoints();
+
+
+		for(int i = 1; i < points.size(); i++)
+		{
+			gc.strokeLine(points.get(i)[0], points.get(i)[1], points.get(i - 1)[0], points.get(i - 1)[1]);
+			//			System.out.printf("drawing %f/%f %f/%f\n", points.get(i)[0], points.get(i)[1], points.get(i - 1)[0], points.get(i - 1)[1]);
+		}
+
+		xOffset = xOffsetPrev;
+		yOffset = yOffsetPrev;
+
+		int fontSize = 20;
+		int lineSpacing = 5;
+		int[] textPosition = new int[]{15, 80};
+		int displayAngle = angle % 360 > 90 ? 180 - angle % 360 : angle % 360;
+
+		gc.setFont(new Font(fontSize));
+		gc.fillText("Power: " + power + " Angle: " + displayAngle, textPosition[0], textPosition[1]);
+		gc.fillText("Weapon: " + getName(), textPosition[0], textPosition[1] + fontSize + lineSpacing);
+		gc.fillText("Overridden: " + (ShellShockAPI.isOverridden() ? "Yes" : "No"), textPosition[0], textPosition[1] + (fontSize + lineSpacing) * 2);
+		gc.fillText(KeyboardHandler.isChatMode() ? "CHAT MODE" : "", textPosition[0], textPosition[1] + (fontSize + lineSpacing) * 3);
+	}
+
+	public void clear()
+	{
+		gc.clearRect(0, 0, width, height);
+		points.clear();
+	}
+
+	protected void calculatePoints()
+	{
+		double t = 0;
+		while(true)
+		{
+			double[] point = getPoint(t);
+			points.add(point);
+
+			if(point[0] < 0 || point[0] > width || point[1] > height)
+				break;
+
+			t += timestep;
+		}
 	}
 
 	public String getName()
 	{
 		return name;
+	}
+
+	protected double[] getPoint(double t)
+	{
+		double[] point = new double[2];
+		point[0] = xOffset + (power * t * Math.cos(Math.toRadians(angle)) + wind * windmult * t * t / 2) * width / 1280;
+		point[1] = height - yOffset - ((power * t * Math.sin(Math.toRadians(angle)) - (1.0f / 2.0f) * gravity * Math.pow(t, 2)) * width / 1280);
+		return point;
+	}
+
+	@Override
+	public int compareTo(Parabulator p)
+	{
+		if(getName() == null || p.getName() == null)
+			return 0;
+
+		return getName().compareTo(p.getName());
+	}
+
+	protected double getApex()
+	{
+		return power * Math.sin(Math.toRadians(angle)) / gravity;
 	}
 }

@@ -1,17 +1,11 @@
-package display.parabulators.expansions;
+package display.parabulators;
 
 import display.parabulators.Parabulator;
 
-public class HeavyHoverballParabulator extends Parabulator
+public class HoverballParabulator extends Parabulator
 {
-	protected final String name = "Heavy Hoverball";
-	private final double hoverTime = 9.49d;
-
-	@Override
-	public String getName()
-	{
-		return name;
-	}
+	protected final String name = "Hoverball";
+	protected final double hoverTime = 7.74d;
 
 	@Override
 	protected double[] getPoint(double t)
@@ -24,5 +18,11 @@ public class HeavyHoverballParabulator extends Parabulator
 		point[0] = xOffset + (power * t * Math.cos(Math.toRadians(angle)) + wind * windmult * t * t / 2) * width / 1280;
 		point[1] = height - yOffset - ((power * t * Math.sin(Math.toRadians(angle)) - (1.0f / 2.0f) * gravity * Math.pow(t, 2)) * width / 1280);
 		return point;
+	}
+
+	@Override
+	public String getName()
+	{
+		return name;
 	}
 }

@@ -1,4 +1,4 @@
-package display.parabulators.expansions;
+package display.parabulators;
 
 import display.parabulators.Parabulator;
 

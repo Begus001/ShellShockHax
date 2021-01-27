@@ -1,11 +1,10 @@
-package display.parabulators.expansions;
+package display.parabulators;
 
 import display.parabulators.Parabulator;
 
-public class BFGParabulator extends Parabulator
+public class FighterJetParabulator extends Parabulator
 {
-	protected static double gravity = 6.12;
-	protected final String name = "BFG/Seagull";
+	protected final String name = "Kampffighterjet";
 
 	@Override
 	protected double[] getPoint(double t)
@@ -13,6 +12,15 @@ public class BFGParabulator extends Parabulator
 		double[] point = new double[2];
 		point[0] = xOffset + (power * t * Math.cos(Math.toRadians(angle)) + wind * windmult * t * t / 2) * width / 1280;
 		point[1] = height - yOffset - ((power * t * Math.sin(Math.toRadians(angle)) - (1.0f / 2.0f) * gravity * Math.pow(t, 2)) * width / 1280);
+		if(t < getApex() && getApex() <= t + timestep && Math.cos(Math.toRadians(angle)) != 0.0f)
+		{
+			points.add(getPoint(getApex()));
+			if(Math.cos(Math.toRadians(angle)) < 0)
+				point[0] = -1;
+			else if(Math.cos(Math.toRadians(angle)) > 0)
+				point[0] = width + 1;
+			point[1] = getPoint(getApex())[1];
+		}
 		return point;
 	}
 

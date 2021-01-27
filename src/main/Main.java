@@ -22,7 +22,6 @@ public class Main extends Application implements WindowListener, ParabulaListene
 {
 	private static final List<Parabulator> parabulators = new ArrayList<>();
 	private static Stage main;
-	private static int state = 0;
 	private static Canvas canvas;
 	private static Parabulator parabulator;
 	private static Scene scene;
@@ -99,8 +98,7 @@ public class Main extends Application implements WindowListener, ParabulaListene
 		stage.setAlwaysOnTop(true);
 		stage.setTitle("ShellShock Hax");
 
-		parabulator = new Parabulator(gc, pos.getWidth(), pos.getHeight());
-		parabulator.draw();
+		Parabulator.init(gc, pos.getWidth(), pos.getHeight());
 		loadParabulators();
 		ShellShockAPI.listen();
 
@@ -124,8 +122,19 @@ public class Main extends Application implements WindowListener, ParabulaListene
 
 	private static void loadParabulators()
 	{
-		parabulators.add(parabulator);
-		parabulators.addAll(ParabulatorLoader.loadParabulators());
+		parabulators.clear();
+		parabulators.addAll(Parabulator.loadParabulators());
+
+		for(Parabulator current : parabulators)
+			if(current.getName().equals("Default"))
+			{
+				parabulators.remove(current);
+				parabulators.add(0, current);
+				break;
+			}
+
+		updateParabulator();
+		parabulator.draw();
 	}
 
 	@Override
